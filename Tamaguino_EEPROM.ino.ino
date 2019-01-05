@@ -880,7 +880,7 @@ void loop() {
       if(!gameOver){
         display.setCursor(0,56);
         display.setTextColor(WHITE);
-        display.print(F("lvl: "));
+        display.print(F("niv: "));
         display.print(level);
         display.setCursor(64,56);
         display.setTextColor(WHITE);
@@ -893,7 +893,7 @@ void loop() {
         display.fillRect(25,12,78,13,WHITE);
         display.setCursor(47,15);
         display.setTextColor(BLACK);
-        display.println(F("PAUSED"));
+        display.println(F("PAUSE"));
       }
       
       /* ---------- END GAME ----------*/
@@ -1311,7 +1311,7 @@ void loop() {
     display.clearDisplay();
     display.setCursor(0,0);
     display.setTextColor(WHITE);
-    display.println(F("Pet died...\n\nPress button 1\nto restart"));
+    display.println(F("Dino mort\n\nPress bouton 1\nto restart"));
     display.display();
 
     if(button1State==HIGH){
