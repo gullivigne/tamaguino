@@ -4,7 +4,13 @@
  ********** TAMAGUINO ***********
  * Tamagotchi clone for Arduino *
  ********************************
- 
+ * Corrections by YG.
+ * Traduction by Lou
+ * Feb - 2019 - gulligne 
+ * Warning ! you should use : 
+ * Adafruit GFX   version 1.2.9
+ * Adafruit ssd1306 version 1.1.2
+
 */
 
 #include <SPI.h>
@@ -13,6 +19,7 @@
 #include <Adafruit_SSD1306.h>
 #include <EEPROM.h>
 #define OLED_RESET 4
+
 Adafruit_SSD1306 display(OLED_RESET);
 
 const int button1Pin = 9;
@@ -284,7 +291,7 @@ const unsigned char eating2 [] PROGMEM = {
 0x00, 0x1f, 0xfc, 0x02, 0xaa, 0xaf, 0x00, 0x07, 0xc0, 0x01, 0x55, 0x57, 0x00, 0x00, 0x00, 0x00, 
 0xaa, 0xab, 0x00, 0x00, 0x00, 0x00, 0x15, 0x55, 0x00, 0x00, 0x00, 0x00, 0x0a, 0xaa, 0x00, 0x00, 
 0x00, 0x00, 0x05, 0x55, 0x00, 0x00, 0x00, 0x00, 0x02, 0xaa, 0x00, 0x00, 0x00, 0x00, 0x01, 0x55, 
- 
+
 };
 const unsigned char eating3 [] PROGMEM = {
 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x07, 0xfc, 0x00, 0x00, 0x00, 0x00, 0x1f, 0xff, 
@@ -327,7 +334,7 @@ const unsigned char steak [] PROGMEM = {
 0x0f, 0x67, 0xff, 0x07, 0x7f, 0xff, 0x03, 0x9f, 0xfc, 0x03, 0xc3, 0xf9, 0x01, 0xf8, 0xc3, 0x00, 
 0xff, 0x1e, 0x00, 0x1f, 0xfe, 0x00, 0x01, 0xfc, 
 };
-    
+
 
 
 //ground
@@ -358,16 +365,30 @@ bool justOpened=false;
 #define MENUSIZE 8
 #define STRING_SIZE 11
 
+//const char mainMenu[MENUSIZE][8][STRING_SIZE] PROGMEM = {
+//  {"food","apple","steak","water",NULL},
+//  {"game",NULL},
+//  {"sleep",NULL},
+//  {"clean",NULL},
+//  {"doctor",NULL},
+//  {"discipline",NULL},
+//  {"stats","hunger","happiness","health","discipline","weight","age",NULL},
+//  {"settings","sound", "save", NULL},
+//};
+
+/* ------- LOUMODIF START------- */
 const char mainMenu[MENUSIZE][8][STRING_SIZE] PROGMEM = {
-  {"food","apple","steak","water",NULL},
-  {"game",NULL},
-  {"sleep",NULL},
-  {"clean",NULL},
-  {"doctor",NULL},
+  {"nourriture","pomme","viande","eau",NULL},
+  {"jeu",NULL},
+  {"repos",NULL},
+  {"nettoyage",NULL},
+  {"docteur",NULL},
   {"discipline",NULL},
-  {"stats","hunger","happiness","health","discipline","weight","age",NULL},
-  {"settings","sound", "save", NULL},
+  {"stats","faim","bonheur","sante","discipline","poids","age",NULL},
+  {"reglages","son", "sauver", NULL},
 };
+/* ------- LOUMODIF END------- */
+
 
 /* ------- PET STATS ------- */
 
@@ -425,7 +446,7 @@ void setup() {
   // or just 
   // pinMode(button1Pin, INPUT_PULLUP)
   // etc
-  
+
   pinMode(sound, OUTPUT);
 
   pinMode(13,OUTPUT);
@@ -435,14 +456,37 @@ void setup() {
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
   display.clearDisplay();
 
-  // splash
+
+  //// splash
+  //display.setTextColor(WHITE);
+  ////display.println(F("jakobdesign presents")); 
+  //display.print(F(" jakobdesign presents")); 
+  //display.drawBitmap(15, 24, splash1 , 48, 26, WHITE);
+  //display.drawBitmap(48, 24, splash2 , 80, 40, WHITE);
+  //display.display();
+
+  ////splash tone
+
+  //tone(sound,500,200);
+  //delay(200);
+  //tone(sound,1000,200);
+  //delay(400);
+  //tone(sound,700,200);
+  //delay(200);
+  //tone(sound,1100,200);
+
+  //delay(2200);
+  //// end splash
+
+/* ------- LOUMODIF START------- */
+// splash
   display.setTextColor(WHITE);
   //display.println(F("jakobdesign presents")); 
-  display.print(F(" jakobdesign presents")); 
+  display.print(F(" Gullivigne presente")); 
   display.drawBitmap(15, 24, splash1 , 48, 26, WHITE);
   display.drawBitmap(48, 24, splash2 , 80, 40, WHITE);
   display.display();
-  
+
   //splash tone
 
   tone(sound,500,200);
@@ -455,20 +499,21 @@ void setup() {
 
   delay(2200);
   // end splash
+/* ------- LOUMODIF END------- */
 
-  
+
   display.clearDisplay();
 }
 
 
 
 void loop() {
-  
+
   button1State = digitalRead(button1Pin);
   button2State = digitalRead(button2Pin);
   button3State = digitalRead(button3Pin);
   //char* str = "";
-  
+
   if(!dead){
     /* -------- MODIFY PET STATS -------- */
     // TODO: different gradients regarding to age
@@ -518,8 +563,8 @@ void loop() {
         tone(sound,200,50);
       }
     }
-  
-    
+
+
     if(hunger<=20 || countPoops()>0 || happiness<=20 || health<=20){
       notification=true;  
     }
@@ -539,16 +584,16 @@ void loop() {
       }
     }
 
-  
+
     display.clearDisplay();
     display.setCursor(0,0);
-  
-  
+
+
     /* ------- BUTTON PRESS ACTIONS ------- */
-    
+
     /* ------- BUTTON 1 - MENU ------- */
     if(button1State==ACTIVATED){
-      
+
       // JUMP IN GAME
       if(game){
 
@@ -558,14 +603,14 @@ void loop() {
           }
           jumping=true;
         }
-        
+
       }else{
         // MENU
 
         if(soundEnabled){
           tone(sound,300,80);
         }
-      
+
         if(!menuOpened){
           menuOpened=true;
         }else{
@@ -583,10 +628,10 @@ void loop() {
             }else{
               ++menu;
             }
-            
+
             if((const char*)pgm_read_word(&(mainMenu[menu][1]))!=NULL){
               subMenu=1;
-              
+
               justOpened=true;
             }
             setting=100*(menu+1)+subMenu;
@@ -594,13 +639,13 @@ void loop() {
         }
 
         delay(60);
-        
+
       }
-      
+
     }
     /* ------- BUTTON 2 - SELECT ------- */
     if(button2State==ACTIVATED){
-      
+
       if(game){
         if(!gameOver){
           paused=!paused;
@@ -609,13 +654,13 @@ void loop() {
           }
           delay(60);
         }
-        
+
       }else{
 
         if(soundEnabled){
           tone(sound,600,80);
         }
-        
+
         if(menuOpened){
 
           if(subMenu!=1 && (const char*)pgm_read_word(&(mainMenu[menu][1][0]))!=NULL){
@@ -631,10 +676,10 @@ void loop() {
             setting=100*(menu+1)+subMenu;
             menuDepth=true;
           }
-          
+
         }else{
           action=NULL;
-          
+
           menuOpened=true;
           menuDepth=true;
           subMenu=1;
@@ -645,16 +690,16 @@ void loop() {
         justOpened=false;
 
         delay(60);
-        
+
       }
-      
+
     }
     /* ------- BUTTON 3 - BACK ------- */
     if(button3State==ACTIVATED){
       if(soundEnabled){
         tone(sound,1000,80);
       }
-      
+
       if(game || gameOver){
         walkPos=0;
         walkXPos=0;
@@ -687,14 +732,14 @@ void loop() {
         subMenu=1;
       }
 
-     
+
       delay(60);
     }
-  
-  
-  
+
+
+
     /* ------- SCENERY AND WALKING ------- */
-  
+
     //draw sun
     sunXPos+=0.1;
     if(sunXPos>display.width()+2*sunRadius){
@@ -702,11 +747,11 @@ void loop() {
       sunOrMoon=!sunOrMoon;
     }
     if(sleeping) {sunOrMoon=true;}
-    
+
     if(sleeping){
       sunOrMoon=true;
     }
-    
+
     if(!sunOrMoon){
       display.fillCircle(sunXPos,2*sunRadius,sunRadius,WHITE);
     }else{
@@ -720,12 +765,12 @@ void loop() {
         }
       }else{
         for(int i=0;i<6;i++){
-          
+
           display.drawPixel(stars[i][0],stars[i][1],WHITE);
         }
       }
     }
-  
+
     //cloud 1
     cloud1XPos-=0.3;
     if(cloud1XPos<-cloud1Width){
@@ -733,15 +778,15 @@ void loop() {
     }
     display.drawBitmap(cloud1XPos, 5, cloud2 , cloud1Width, 5, WHITE);
 
-    
+
     //mountains
     display.drawBitmap(0, 7, mountains , 128, 16, WHITE);
-  
+
     //walk and move ground perspective
 
     if(game){
 
-      
+
       /* ------ GAME -----*/
       level=round(score/10);
 
@@ -775,15 +820,15 @@ void loop() {
           if(walkPos==3){walkPos=2; walkAnimReverse=true;}
         }
 
-        
-        
+
+
         walkXPos+=2;
         grassXPos+=4;
         treesXPos=treesXPos+1+level;
         obstacle1XPos=obstacle1XPos+2+level;
         obstacle2XPos=obstacle2XPos+2+level;
 
-        
+
         if(!jumping && 
             (
               (obstacle1show && display.width()-obstacle1XPos>=20 && display.width()-obstacle1XPos<=46)
@@ -817,11 +862,11 @@ void loop() {
             weight-=score*0.0025;
             EEPROM.write(weight_address, weight);
           }
-          
-          
+
+
         }
       }
-      
+
       if(walkXPos==display.width()){
         walkXPos=0;
       }
@@ -840,7 +885,7 @@ void loop() {
 
 
       // obstacles 1
-      
+
       if(obstacle1XPos-16>=display.width()){
         obstacle1XPos=0;
         obstacle1show=false;
@@ -862,14 +907,14 @@ void loop() {
         obstacle2show = true;
         obstacle2XPos=0;
       }
-      
+
       if(obstacle2show){
         display.drawBitmap(display.width()-obstacle2XPos, 44, obstacle2 , 16, 6, WHITE);
       }
 
 
-      
-      
+
+
       //draw front grass
       for(int i=0;i<display.width()/16+1;i++){
         display.drawBitmap(-grassXPos+i*32, 60, grass_front , 32, 8, WHITE);
@@ -880,7 +925,7 @@ void loop() {
       if(!gameOver){
         display.setCursor(0,56);
         display.setTextColor(WHITE);
-        display.print(F("niv: "));
+        display.print(F("lvl: "));
         display.print(level);
         display.setCursor(64,56);
         display.setTextColor(WHITE);
@@ -893,13 +938,17 @@ void loop() {
         display.fillRect(25,12,78,13,WHITE);
         display.setCursor(47,15);
         display.setTextColor(BLACK);
-        display.println(F("PAUSE"));
+        //display.println(F("PAUSED"));
+
+/* ------- LOUMODIF START------- */
+    display.println(F("PAUSE"));
+/* ------- LOUMODIF END------- */
       }
-      
+
       /* ---------- END GAME ----------*/
-      
+
     }else{
-      
+
       /* ------ NO GAME -----*/
       if(!sleeping){
         display.drawBitmap(walkXPos, 26, dinoWalk[walkPos+walkDirOffset] , 48, 24, WHITE);
@@ -938,7 +987,7 @@ void loop() {
         }
         if(walkXPos<0){walkRight=true; walkDirOffset=0;}  
       }
-      
+
       //draw grass (ground)
       for(int i=0;i<2*display.width()/4;i++){
         display.drawBitmap(-walkXPos+i*8, 50, grass , 8, 6, WHITE);
@@ -957,7 +1006,7 @@ void loop() {
       display.drawBitmap(-treesXPos, 23, trees , 112, 20, WHITE);
 
 
-        
+
       if(!sleeping){
         if(walkAnimReverse){
           --walkPos;
@@ -967,10 +1016,10 @@ void loop() {
           if(walkPos==3){walkPos=2; walkAnimReverse=true;}
         }
       }
-      
+
     }
-  
-  
+
+
     /* ------- MENUS AND ACTIONS ------- */
     //render menu
     if(menuOpened and !game){
@@ -1005,7 +1054,7 @@ void loop() {
         display.println(subItem);
       }
     }
-  
+
     //do actions
 
     if(action>0){
@@ -1025,7 +1074,7 @@ void loop() {
         //0-5 discipline = 9% chance
 
         //animate eating
-        
+
         display.fillRect(0,0,display.width(),display.height(),BLACK);
         for(int j=0;j<3;j++){
           for(int i=0; i<4; i++){
@@ -1049,7 +1098,7 @@ void loop() {
                 display.drawCircle(80,55,5+2*i,WHITE);
                 display.drawCircle(80,55,10+4*i,WHITE);
                 break;
-              
+
 
             }
             display.drawBitmap(80,24,eating[i],48,40,WHITE);
@@ -1057,9 +1106,9 @@ void loop() {
             display.display();
           }
         }
-        
-        
-        
+
+
+
         switch(action){
           //apple
           case 101:
@@ -1156,7 +1205,7 @@ void loop() {
                 delay(300);
               }
             }
-              
+
           break;
         case 601:
           //discipline
@@ -1180,7 +1229,7 @@ void loop() {
               display.display();
               delay(150);
             }
-            
+
           }
           break;
 
@@ -1204,19 +1253,34 @@ void loop() {
     if(setting>0 and !game){
       display.setCursor(8,16);
       if(setting==201){
-        display.println(F("increase happiness"));
+        //display.println(F("increase happiness"));
+/* ------- LOUMODIF START------- */
+    display.println(F("augmenter le bonheur"));
+/* ------- LOUMODIF END------- */
       }
       if(setting==301){
-        display.println(F("get some rest"));
+        //display.println(F("get some rest"));
+/* ------- LOUMODIF START------- */
+    display.println(F("se reposer"));
+/* ------- LOUMODIF END------- */
       }
       if(setting==401){
-        display.println(F("keep it healthy"));
+        //display.println(F("keep it healthy"));
+/* ------- LOUMODIF START------- */
+    display.println(F("garder la sante"));
+/* ------- LOUMODIF END------- */
       }
       if(setting==501){
-        display.println(F("when health is bad"));
+    //display.println(F("when health is bad"));
+/* ------- LOUMODIF START------- */
+    display.println(F("si malade "));
+/* ------- LOUMODIF END------- */
       }
       if(setting==601){
-        display.println(F("get smarter"));
+        //display.println(F("get smarter"));
+/* ------- LOUMODIF START------- */
+    display.println(F("plus malin"));
+/* ------- LOUMODIF END------- */
       }
       if(setting==701 || setting==702 || setting==703 || setting==704){
         display.drawRect(70,17,52,7,WHITE);
@@ -1280,9 +1344,9 @@ void loop() {
 
     // GAME OVER
     if(gameOver){
-      
 
-      
+
+
       display.fillRect(15,11,98,43,BLACK);
       display.drawRect(16,12,96,41,WHITE);
       display.fillRect(16,12,96,13,WHITE);
@@ -1299,25 +1363,37 @@ void loop() {
         display.setCursor(21,40);
       }
       display.println(score);
-      
-      
-      
+
+
+
     }
 
     display.display();
-     
+
   }else{
     //dead...
     display.clearDisplay();
     display.setCursor(0,0);
     display.setTextColor(WHITE);
-    display.println(F("Dino mort\n\nPress bouton 1\nto restart"));
+    //display.println(F("Pet died...\n\nPress button 1\nto restart"));
+/* ------- LOUMODIF START------- */
+    display.println(F("Dino mort...\n\nPresser bouton 1\npour recommencer"));
+/* ------- LOUMODIF END------- */
     display.display();
-
-    if(button1State==HIGH){
+    while (button1State==HIGH) {  
+      button1State = digitalRead(button1Pin);
+    }
+    
+    {
+        EEPROM.write(age_address, 0);
+        EEPROM.write(hunger_address, 100);
+        EEPROM.write(happiness_address, 100);
+        EEPROM.write(discipline_address, 100);
+        EEPROM.write(health_address, 100);
+        EEPROM.write(weight_address, 1);
       if(soundEnabled){
         tone(sound,300,80);
-        delay(200);
+        delay(200);      
       }
       noTone(sound);
       asm volatile ("  jmp 0");
