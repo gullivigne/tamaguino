@@ -32,12 +32,12 @@ int button1State = 0;
 int button2State = 0;
 int button3State = 0;
 int hi_address = 0;
-int hunger_address=2;
-int happiness_address=3;
-int health_address =4;
-int discipline_address=5;
-int weight_address=6;
-int age_address=7;
+int hunger_address=20;
+int happiness_address=30;
+int health_address =40;
+int discipline_address=50;
+int weight_address=60;
+int age_address=70;
 
 // splash 48x26
 const unsigned char splash1 [] PROGMEM = {
@@ -392,12 +392,12 @@ const char mainMenu[MENUSIZE][8][STRING_SIZE] PROGMEM = {
 
 /* ------- PET STATS ------- */
 
-float hunger= EEPROM.read(hunger_address);
-float happiness= EEPROM.read(happiness_address);
-float health=  EEPROM.read(health_address);
-float discipline=  EEPROM.read(discipline_address);
-float weight=  EEPROM.read(weight_address);
-float age=  EEPROM.read(age_address);
+float hunger=100;
+float happiness=100;
+float health=100;
+float discipline=100;
+float weight=1.0;
+float age=0.0;
 
 //settings
 bool soundEnabled=true;
@@ -436,6 +436,15 @@ int poops [3] = {
 #define ACTIVATED LOW
 
 void setup() {
+
+
+  EEPROM.get(hunger_address,hunger);
+  EEPROM.get(happiness_address,happiness);
+  EEPROM.get(health_address,health);
+  EEPROM.get(discipline_address,discipline);
+  EEPROM.get(weight_address,weight);
+  EEPROM.get(age_address,age);
+  
   pinMode(button1Pin, INPUT);
   pinMode(button2Pin, INPUT);
   pinMode(button3Pin, INPUT);
@@ -540,7 +549,7 @@ void loop() {
       //discipline-=0.02;
     }
     age+=0.000025;
-    EEPROM.write(age_address, age);
+    EEPROM.put(age_address, age);
 
     //diarrhea :) for testing
     //poopometer+=0.005;
@@ -860,7 +869,7 @@ void loop() {
           health-=1;
           if(weight-score*0.0025>5){
             weight-=score*0.0025;
-            EEPROM.write(weight_address, weight);
+            EEPROM.put(weight_address, weight);
           }
 
 
@@ -1122,8 +1131,8 @@ void loop() {
               health+=1;
             }
             poopometer+=0.02;
-            EEPROM.write(hunger_address, hunger);
-            EEPROM.write(weight_address, weight);
+            EEPROM.put(hunger_address, hunger);
+            EEPROM.put(weight_address, weight);
             break;
           //steak
           case 102:
@@ -1138,8 +1147,8 @@ void loop() {
               health-=1;
             }
             poopometer+=0.05;
-            EEPROM.write(hunger_address, hunger);
-            EEPROM.write(weight_address, weight);
+            EEPROM.put(hunger_address, hunger);
+            EEPROM.put(weight_address, weight);
             break;
           //water
           case 103:
@@ -1147,8 +1156,8 @@ void loop() {
               hunger+=5;
             }
             poopometer+=0.01;
-            EEPROM.write(hunger_address, hunger);
-            EEPROM.write(weight_address, weight);
+            EEPROM.put(hunger_address, hunger);
+            EEPROM.put(weight_address, weight);
             break;
 
         }
@@ -1201,7 +1210,7 @@ void loop() {
                   display.fillRect(56,0,16,64,WHITE);
                 }
                 display.display();
-                EEPROM.write(health_address, health);
+                EEPROM.put(health_address, health);
                 delay(300);
               }
             }
@@ -1219,7 +1228,7 @@ void loop() {
               happiness-=3;
             }
             delay(150);
-            EEPROM.write(happiness_address, happiness);
+            EEPROM.put(happiness_address, happiness);
             for(int i=0;i<5;i++){
               if(soundEnabled){
                 tone(sound,200*i,100);
@@ -1240,10 +1249,10 @@ void loop() {
           case 802:
             EEPROM.put(age_address,age);
             EEPROM.put(weight_address, (weight));
-            EEPROM.write(hunger_address,hunger);
-            EEPROM.write(discipline_address, discipline);
-            EEPROM.write(happiness_address, happiness);
-            EEPROM.write(health_address, health);
+            EEPROM.put(hunger_address,hunger);
+            EEPROM.put(discipline_address, discipline);
+            EEPROM.put(happiness_address, happiness);
+            EEPROM.put(health_address, health);
           break;
       }
       action=0;
@@ -1308,7 +1317,7 @@ void loop() {
       if(setting==706){
         display.print(age,1);
         display.println(F(" y."));
-        EEPROM.write(age_address, age);
+        EEPROM.put(age_address, age);
       }
       if(setting==801){
         if(soundEnabled){
@@ -1385,12 +1394,19 @@ void loop() {
     }
     
     {
-        EEPROM.write(age_address, 0);
-        EEPROM.write(hunger_address, 100);
-        EEPROM.write(happiness_address, 100);
-        EEPROM.write(discipline_address, 100);
-        EEPROM.write(health_address, 100);
-        EEPROM.write(weight_address, 1);
+        float age = 0;
+        float hunger = 100;
+        float happiness = 100;
+        float discipline = 100;
+        float health = 100;
+        float weight = 1 ;
+
+        EEPROM.put(age_address, age);
+        EEPROM.put(hunger_address, hunger);
+        EEPROM.put(happiness_address, happiness);
+        EEPROM.put(discipline_address, discipline);
+        EEPROM.put(health_address, health);
+        EEPROM.put(weight_address, weight);
       if(soundEnabled){
         tone(sound,300,80);
         delay(200);      
